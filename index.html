@@ -62,6 +62,12 @@
             height: 16px;
             animation: spin 1s linear infinite;
         }
+        .loading-spinner {
+            border-top-color: transparent;
+            width: 48px;
+            height: 48px;
+            animation: spin 1.5s linear infinite;
+        }
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -117,7 +123,7 @@
                 <hr class="border-slate-700 my-8">
                 <div>
                     <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
-                        <h2 class="text-xl font-semibold text-slate-100 mb-4 sm:mb-0">Riwayat Transaksi (Lokal)</h2>
+                        <h2 class="text-xl font-semibold text-slate-100 mb-4 sm:mb-0">Aktivitas Terakhir</h2>
                         <button id="view-recap-btn" class="w-full sm:w-auto bg-slate-700 text-slate-300 font-semibold py-2 px-4 rounded-lg hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-slate-500 transition duration-200 ease-in-out flex items-center justify-center space-x-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-1.707 1.707A1 1 0 003 15v4a1 1 0 001 1h12a1 1 0 001-1v-4a1 1 0 00-.293-.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" /></svg>
                             <span>Lihat Rekap</span>
@@ -224,9 +230,6 @@
                         transactionTableBody.appendChild(row);
                     });
                 }
-                totalMasukEl.textContent = formatCurrency(totalMasuk);
-                totalKeluarEl.textContent = formatCurrency(totalKeluar);
-                saldoAkhirEl.textContent = formatCurrency(totalMasuk - totalKeluar);
             };
 
             const saveLocalTransactions = () => localStorage.setItem('transactions_v4', JSON.stringify(localTransactions));
@@ -251,6 +254,7 @@
                 try {
                     await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'addTransaction', data: sheetData }), mode: 'no-cors' });
                     console.log('Berhasil mengirim data ke Google Sheet.');
+                    fetchTransactionsFromSheet(true); // Re-fetch silently in background
                 } catch (error) {
                     console.error('Gagal mengirim data ke Google Sheet:', error);
                     alert('Gagal menyimpan data ke Google Sheet.');
@@ -260,39 +264,62 @@
                 }
             };
 
-            const fetchTransactionsFromSheet = async () => {
-                recapTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-500">Memuat data...</td></tr>`;
+            const fetchTransactionsFromSheet = async (isSilent = false) => {
+                if (!isSilent) {
+                    const loadingHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center py-20">
+                                <div class="flex flex-col items-center justify-center space-y-4">
+                                    <div class="loading-spinner border-4 border-slate-500 rounded-full"></div>
+                                    <p class="text-slate-400 text-lg">Menyinkronkan data dari server...</p>
+                                    <p class="text-slate-500">Mohon tunggu, ini hanya sebentar.</p>
+                                </div>
+                            </td>
+                        </tr>`;
+                    recapTableBody.innerHTML = loadingHTML;
+                }
+
                 try {
                     const response = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getTransactions' }), redirect: "follow" });
                     const result = await response.json();
                     if (result.result !== 'success') throw new Error(result.message);
                     
                     recapData = result.data;
-                    recapTableBody.innerHTML = '';
-                    if (recapData.length === 0) {
-                       recapTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-500">Tidak ada data.</td></tr>`;
-                       return;
-                    }
+                    let totalMasuk = 0, totalKeluar = 0;
 
-                    let recapSaldo = 0;
-                    recapData.forEach((item, index) => {
-                        const masuk = parseFloat(item.masuk) || 0;
-                        const keluar = parseFloat(item.keluar) || 0;
-                        recapSaldo += (masuk - keluar);
-                        const row = document.createElement('tr');
-                        row.className = 'border-b border-slate-700';
-                        row.innerHTML = `
-                            <td class="px-6 py-4">${index + 1}</td> <td class="px-6 py-4">${formatDateTime(item.timestamp)}</td>
-                            <td class="px-6 py-4 font-medium text-slate-100">${item.deskripsi}</td>
-                            <td class="px-6 py-4 text-teal-400 font-semibold">${masuk > 0 ? formatCurrency(masuk) : '-'}</td>
-                            <td class="px-6 py-4 text-rose-400 font-semibold">${keluar > 0 ? formatCurrency(keluar) : '-'}</td>
-                            <td class="px-6 py-4 font-bold ${recapSaldo >= 0 ? 'text-violet-400' : 'text-rose-400'}">${formatCurrency(recapSaldo)}</td>
-                            <td class="px-6 py-4">${item.pj || '-'}</td>`;
-                        recapTableBody.appendChild(row);
-                    });
+                    if (!isSilent) recapTableBody.innerHTML = '';
+                    if (recapData.length === 0) {
+                       if (!isSilent) recapTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-500">Tidak ada data.</td></tr>`;
+                    } else {
+                        let recapSaldo = 0;
+                        recapData.forEach((item, index) => {
+                            const masuk = parseFloat(item.masuk) || 0;
+                            const keluar = parseFloat(item.keluar) || 0;
+                            totalMasuk += masuk;
+                            totalKeluar += keluar;
+                            recapSaldo += (masuk - keluar);
+                            if (!isSilent) {
+                                const row = document.createElement('tr');
+                                row.className = 'border-b border-slate-700';
+                                row.innerHTML = `
+                                    <td class="px-6 py-4">${index + 1}</td> <td class="px-6 py-4">${formatDateTime(item.timestamp)}</td>
+                                    <td class="px-6 py-4 font-medium text-slate-100">${item.deskripsi}</td>
+                                    <td class="px-6 py-4 text-teal-400 font-semibold">${masuk > 0 ? formatCurrency(masuk) : '-'}</td>
+                                    <td class="px-6 py-4 text-rose-400 font-semibold">${keluar > 0 ? formatCurrency(keluar) : '-'}</td>
+                                    <td class="px-6 py-4 font-bold ${recapSaldo >= 0 ? 'text-violet-400' : 'text-rose-400'}">${formatCurrency(recapSaldo)}</td>
+                                    <td class="px-6 py-4">${item.pj || '-'}</td>`;
+                                recapTableBody.appendChild(row);
+                            }
+                        });
+                    }
+                    // Update summary cards with data from sheet
+                    totalMasukEl.textContent = formatCurrency(totalMasuk);
+                    totalKeluarEl.textContent = formatCurrency(totalKeluar);
+                    saldoAkhirEl.textContent = formatCurrency(totalMasuk - totalKeluar);
+
                 } catch (error) {
                     console.error('Gagal mengambil data:', error);
-                    recapTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-red-400">Gagal memuat data.</td></tr>`;
+                    if (!isSilent) recapTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-red-400">Gagal memuat data.</td></tr>`;
                 }
             };
             
@@ -347,6 +374,7 @@
 
             // Initial render on page load
             renderLocalTransactions();
+            fetchTransactionsFromSheet(true); // Fetch sheet data in background on load
         });
     </script>
 </body>
