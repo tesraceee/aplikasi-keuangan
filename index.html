@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Keuangan Futuristik</title>
+    <title>Aplikasi Keuangan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,12 +66,6 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        .modal-overlay {
-            transition: opacity 0.3s ease;
-        }
-        .modal-content {
-            transition: transform 0.3s ease;
-        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -130,7 +124,7 @@
                         </button>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left text-slate-400"><thead class="text-xs text-slate-300 uppercase bg-slate-900/30"><tr><th scope="col" class="px-6 py-3">No</th><th scope="col" class="px-6 py-3">Tanggal</th><th scope="col" class="px-6 py-3">Deskripsi</th><th scope="col" class="px-6 py-3">Masuk</th><th scope="col" class="px-6 py-3">Keluar</th><th scope="col" class="px-6 py-3">Saldo</th><th scope="col" class="px-6 py-3">PJ</th><th scope="col" class="px-6 py-3 text-center">Aksi</th></tr></thead><tbody id="transaction-table-body"></tbody></table>
+                        <table class="w-full text-sm text-left text-slate-400"><thead class="text-xs text-slate-300 uppercase bg-slate-900/30"><tr><th scope="col" class="px-6 py-3">No</th><th scope="col" class="px-6 py-3">Tanggal & Waktu</th><th scope="col" class="px-6 py-3">Deskripsi</th><th scope="col" class="px-6 py-3">Masuk</th><th scope="col" class="px-6 py-3">Keluar</th><th scope="col" class="px-6 py-3">Saldo</th><th scope="col" class="px-6 py-3">PJ</th><th scope="col" class="px-6 py-3 text-center">Aksi</th></tr></thead><tbody id="transaction-table-body"></tbody></table>
                     </div>
                 </div>
             </div>
@@ -153,28 +147,9 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-slate-400"><thead class="text-xs text-slate-300 uppercase bg-slate-900/30"><tr><th scope="col" class="px-6 py-3">No</th><th scope="col" class="px-6 py-3">Tanggal</th><th scope="col" class="px-6 py-3">Deskripsi</th><th scope="col" class="px-6 py-3">Masuk</th><th scope="col" class="px-6 py-3">Keluar</th><th scope="col" class="px-6 py-3">Saldo</th><th scope="col" class="px-6 py-3">PJ</th><th scope="col" class="px-6 py-3 text-center">Aksi</th></tr></thead><tbody id="recap-table-body"></tbody></table>
+                    <table class="w-full text-sm text-left text-slate-400"><thead class="text-xs text-slate-300 uppercase bg-slate-900/30"><tr><th scope="col" class="px-6 py-3">No</th><th scope="col" class="px-6 py-3">Tanggal & Waktu</th><th scope="col" class="px-6 py-3">Deskripsi</th><th scope="col" class="px-6 py-3">Masuk</th><th scope="col" class="px-6 py-3">Keluar</th><th scope="col" class="px-6 py-3">Saldo</th><th scope="col" class="px-6 py-3">PJ</th></tr></thead><tbody id="recap-table-body"></tbody></table>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Edit Modal -->
-    <div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 hidden modal-overlay z-50">
-        <div class="glassmorphism rounded-2xl p-6 md:p-8 w-full max-w-lg modal-content scale-95">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-slate-100">Edit Transaksi</h2>
-                <button id="close-modal-btn" class="text-slate-400 hover:text-white">&times;</button>
-            </div>
-            <form id="edit-form" class="space-y-4">
-                <input type="hidden" id="edit-row-number">
-                <input type="hidden" id="edit-original-date">
-                <div><label for="edit-deskripsi" class="block text-sm font-medium text-slate-400">Deskripsi</label><input type="text" id="edit-deskripsi" class="input-glow mt-1 block w-full px-3 py-2 bg-slate-900/50 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-500 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition" required></div>
-                <div><label for="edit-masuk" class="block text-sm font-medium text-slate-400">Masuk (Rp)</label><input type="text" inputmode="numeric" id="edit-masuk" class="input-glow mt-1 block w-full px-3 py-2 bg-slate-900/50 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-500 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition"></div>
-                <div><label for="edit-keluar" class="block text-sm font-medium text-slate-400">Keluar (Rp)</label><input type="text" inputmode="numeric" id="edit-keluar" class="input-glow mt-1 block w-full px-3 py-2 bg-slate-900/50 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-500 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition"></div>
-                <div><label for="edit-pj" class="block text-sm font-medium text-slate-400">Penanggung Jawab (PJ)</label><input type="text" id="edit-pj" class="input-glow mt-1 block w-full px-3 py-2 bg-slate-900/50 border border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-500 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition"></div>
-                <button type="submit" id="update-button" class="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold py-2.5 px-4 rounded-lg hover:from-teal-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500 transition duration-200 ease-in-out flex items-center justify-center"><span id="update-button-text">Simpan Perubahan</span><div id="update-spinner" class="spinner border-2 border-white rounded-full ml-2 hidden"></div></button>
-            </form>
         </div>
     </div>
 
@@ -204,20 +179,6 @@
             const recapTableBody = document.getElementById('recap-table-body');
             const downloadCsvBtn = document.getElementById('download-csv-btn');
 
-            // Modal Elements
-            const editModal = document.getElementById('edit-modal');
-            const closeModalBtn = document.getElementById('close-modal-btn');
-            const editForm = document.getElementById('edit-form');
-            const editRowNumberInput = document.getElementById('edit-row-number');
-            const editOriginalDateInput = document.getElementById('edit-original-date');
-            const editDeskripsiInput = document.getElementById('edit-deskripsi');
-            const editMasukInput = document.getElementById('edit-masuk');
-            const editKeluarInput = document.getElementById('edit-keluar');
-            const editPjInput = document.getElementById('edit-pj');
-            const updateButton = document.getElementById('update-button');
-            const updateButtonText = document.getElementById('update-button-text');
-            const updateSpinner = document.getElementById('update-spinner');
-
             // --- State Management ---
             let localTransactions = JSON.parse(localStorage.getItem('transactions_v4')) || [];
             let recapData = [];
@@ -225,6 +186,11 @@
             // --- Helper Functions ---
             const formatCurrency = (amount) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
             const formatDate = (dateString) => new Date(dateString).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+            const formatDateTime = (dateString) => {
+                const date = new Date(dateString);
+                const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+                return date.toLocaleString('id-ID', options).replace(/\./g, ':').replace(',', ' -');
+            };
             const formatNumberWithDots = (numStr) => numStr ? new Intl.NumberFormat('id-ID').format(String(numStr).replace(/\D/g, '')) : '';
             const parseFormattedNumber = (fmtStr) => fmtStr ? parseFloat(String(fmtStr).replace(/\./g, '')) || 0 : 0;
             const capitalizeWords = (str) => str ? str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
@@ -232,8 +198,6 @@
             // --- Page Navigation & Modal Logic ---
             const showDashboard = () => { dashboardPage.classList.remove('hidden'); recapPage.classList.add('hidden'); };
             const showRecap = () => { dashboardPage.classList.add('hidden'); recapPage.classList.remove('hidden'); fetchTransactionsFromSheet(); };
-            const openEditModal = () => { editModal.classList.remove('hidden'); setTimeout(() => { editModal.querySelector('.modal-content').classList.remove('scale-95'); editModal.classList.remove('opacity-0'); }, 10); };
-            const closeEditModal = () => { editModal.querySelector('.modal-content').classList.add('scale-95'); editModal.classList.add('opacity-0'); setTimeout(() => editModal.classList.add('hidden'), 300); };
 
             // --- Core Application Logic ---
             const renderLocalTransactions = () => {
@@ -250,7 +214,7 @@
                         const row = document.createElement('tr');
                         row.className = 'border-b border-slate-700 hover:bg-slate-800/60';
                         row.innerHTML = `
-                            <td class="px-6 py-4">${index + 1}</td> <td class="px-6 py-4">${formatDate(trx.date)}</td>
+                            <td class="px-6 py-4">${index + 1}</td> <td class="px-6 py-4">${formatDateTime(trx.date)}</td>
                             <td class="px-6 py-4 font-medium text-slate-100">${trx.deskripsi}</td>
                             <td class="px-6 py-4 text-teal-400 font-semibold">${masuk > 0 ? formatCurrency(masuk) : '-'}</td>
                             <td class="px-6 py-4 text-rose-400 font-semibold">${keluar > 0 ? formatCurrency(keluar) : '-'}</td>
@@ -283,7 +247,7 @@
                 saveLocalTransactions();
                 renderLocalTransactions();
                 
-                const sheetData = { tanggal: formatDate(newTransaction.date), deskripsi, masuk, keluar, pj };
+                const sheetData = { tanggal: formatDateTime(newTransaction.date), deskripsi, masuk, keluar, pj };
                 try {
                     await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'addTransaction', data: sheetData }), mode: 'no-cors' });
                     console.log('Berhasil mengirim data ke Google Sheet.');
@@ -297,7 +261,7 @@
             };
 
             const fetchTransactionsFromSheet = async () => {
-                recapTableBody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-slate-500">Memuat data...</td></tr>`;
+                recapTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-500">Memuat data...</td></tr>`;
                 try {
                     const response = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getTransactions' }), redirect: "follow" });
                     const result = await response.json();
@@ -306,7 +270,7 @@
                     recapData = result.data;
                     recapTableBody.innerHTML = '';
                     if (recapData.length === 0) {
-                       recapTableBody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-slate-500">Tidak ada data.</td></tr>`;
+                       recapTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-500">Tidak ada data.</td></tr>`;
                        return;
                     }
 
@@ -318,27 +282,23 @@
                         const row = document.createElement('tr');
                         row.className = 'border-b border-slate-700';
                         row.innerHTML = `
-                            <td class="px-6 py-4">${index + 1}</td> <td class="px-6 py-4">${item.tanggal}</td>
+                            <td class="px-6 py-4">${index + 1}</td> <td class="px-6 py-4">${formatDateTime(item.timestamp)}</td>
                             <td class="px-6 py-4 font-medium text-slate-100">${item.deskripsi}</td>
                             <td class="px-6 py-4 text-teal-400 font-semibold">${masuk > 0 ? formatCurrency(masuk) : '-'}</td>
                             <td class="px-6 py-4 text-rose-400 font-semibold">${keluar > 0 ? formatCurrency(keluar) : '-'}</td>
                             <td class="px-6 py-4 font-bold ${recapSaldo >= 0 ? 'text-violet-400' : 'text-rose-400'}">${formatCurrency(recapSaldo)}</td>
-                            <td class="px-6 py-4">${item.pj || '-'}</td>
-                            <td class="px-6 py-4 text-center space-x-2">
-                                <button data-row="${item.row}" class="edit-recap-btn text-slate-500 hover:text-cyan-400"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg></button>
-                                <button data-row="${item.row}" class="delete-recap-btn text-slate-500 hover:text-rose-500"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg></button>
-                            </td>`;
+                            <td class="px-6 py-4">${item.pj || '-'}</td>`;
                         recapTableBody.appendChild(row);
                     });
                 } catch (error) {
                     console.error('Gagal mengambil data:', error);
-                    recapTableBody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-red-400">Gagal memuat data.</td></tr>`;
+                    recapTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-red-400">Gagal memuat data.</td></tr>`;
                 }
             };
             
             const downloadRecapAsCSV = () => {
                 if (recapData.length === 0) return alert('Tidak ada data untuk di-download.');
-                const headers = ["No", "Tanggal", "Deskripsi", "Masuk", "Keluar", "Saldo", "PJ"];
+                const headers = ["No", "Tanggal & Waktu", "Deskripsi", "Masuk", "Keluar", "Saldo", "PJ"];
                 let csvContent = headers.join(",") + "\r\n";
                 let saldo = 0;
                 recapData.forEach((item, index) => {
@@ -347,7 +307,7 @@
                     saldo += (masuk - keluar);
                     const deskripsi = `"${String(item.deskripsi || '').replace(/"/g, '""')}"`;
                     const pj = `"${String(item.pj || '').replace(/"/g, '""')}"`;
-                    const row = [index + 1, item.tanggal, deskripsi, masuk, keluar, saldo, pj];
+                    const row = [index + 1, `"${formatDateTime(item.timestamp)}"`, deskripsi, masuk, keluar, saldo, pj];
                     csvContent += row.join(",") + "\r\n";
                 });
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -384,68 +344,6 @@
             viewRecapBtn.addEventListener('click', showRecap);
             backToDashboardBtn.addEventListener('click', showDashboard);
             downloadCsvBtn.addEventListener('click', downloadRecapAsCSV);
-            closeModalBtn.addEventListener('click', closeEditModal);
-
-            recapTableBody.addEventListener('click', (e) => {
-                const editBtn = e.target.closest('.edit-recap-btn');
-                const deleteBtn = e.target.closest('.delete-recap-btn');
-                if (editBtn) {
-                    const rowNumber = editBtn.dataset.row;
-                    const transaction = recapData.find(item => item.row == rowNumber);
-                    if (transaction) {
-                        editRowNumberInput.value = transaction.row;
-                        editOriginalDateInput.value = transaction.tanggal;
-                        editDeskripsiInput.value = transaction.deskripsi;
-                        editMasukInput.value = formatNumberWithDots(transaction.masuk);
-                        editKeluarInput.value = formatNumberWithDots(transaction.keluar);
-                        editPjInput.value = transaction.pj;
-                        openEditModal();
-                    }
-                }
-                if (deleteBtn) {
-                    const rowNumber = deleteBtn.dataset.row;
-                    if (confirm(`Anda yakin ingin menghapus transaksi ini secara permanen dari Google Sheet?`)) {
-                        deleteTransactionOnSheet(rowNumber);
-                    }
-                }
-            });
-
-            editForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                updateButton.disabled = true; updateButtonText.textContent = 'Menyimpan...'; updateSpinner.classList.remove('hidden');
-
-                const row = editRowNumberInput.value;
-                const updatedData = {
-                    tanggal: editOriginalDateInput.value,
-                    deskripsi: capitalizeWords(editDeskripsiInput.value),
-                    masuk: parseFormattedNumber(editMasukInput.value),
-                    keluar: parseFormattedNumber(editKeluarInput.value),
-                    pj: capitalizeWords(editPjInput.value),
-                };
-
-                try {
-                    const response = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'editTransaction', row: row, data: updatedData }), mode: 'no-cors' });
-                    closeEditModal();
-                    // Give Google Sheet a moment to update before refreshing
-                    setTimeout(fetchTransactionsFromSheet, 1000);
-                } catch (error) {
-                    console.error('Gagal memperbarui data:', error);
-                    alert('Gagal memperbarui data.');
-                } finally {
-                    updateButton.disabled = false; updateButtonText.textContent = 'Simpan Perubahan'; updateSpinner.classList.add('hidden');
-                }
-            });
-
-            const deleteTransactionOnSheet = async (row) => {
-                try {
-                    await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'deleteTransaction', row: row }), mode: 'no-cors' });
-                    // Give Google Sheet a moment to update before refreshing
-                    setTimeout(fetchTransactionsFromSheet, 1000);
-                } catch (error) {
-                    console.error('Gagal menghapus data:', error);
-                    alert('Gagal menghapus data.');
-                }
-            };
 
             // Initial render on page load
             renderLocalTransactions();
